@@ -1,0 +1,330 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Seat reservation test collection",
+		"_postman_id": "327e4830-0dd0-e189-fbe0-fcab45397ab8",
+		"description": "This is a test collection for walmart seat reservation service.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all available seats at level 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"should get 10 available seats at level 1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(10);",
+							"    pm.expect(jsonData[0].reserved).to.eql(false);",
+							"    pm.expect(jsonData[9].reserved).to.eql(false);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/api/seats?level=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"seats"
+					],
+					"query": [
+						{
+							"key": "level",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Hold 15 seats from level1 and level2 for chuan@test.com",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Should hold 15 seats\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.heldBy).to.eql('chuan@test.com');",
+							"    pm.expect(jsonData.seats.length).to.eql(15);",
+							"    pm.expect(jsonData.seats[0]).to.eql(1);",
+							"    pm.expect(jsonData.seats[14]).to.eql(15);",
+							"    ",
+							"    // get seatHoldId",
+							"    pm.environment.set(\"seatHoldId\", jsonData.id);",
+							"});",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/api/holdseats?numSeats=15&minLevel=1&maxLevel=2&customerEmail=chuan@test.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"holdseats"
+					],
+					"query": [
+						{
+							"key": "numSeats",
+							"value": "15",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "minLevel",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "maxLevel",
+							"value": "2",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "customerEmail",
+							"value": "chuan@test.com",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "reserve 15 holding seats",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"should reserve 15 holding seats\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.reservedBy).to.eql('chuan@test.com');",
+							"    pm.expect(jsonData.seatIds).to.eql('1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15');",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/api/reservations?seatHoldId={{seatHoldId}}&customerEmail=chuan@test.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reservations"
+					],
+					"query": [
+						{
+							"key": "seatHoldId",
+							"value": "{{seatHoldId}}",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "customerEmail",
+							"value": "chuan@test.com",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get all seats",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Should have 15 unreserved\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(15);",
+							"    pm.expect(jsonData[0].reserved).to.eql(false);",
+							"    pm.expect(jsonData[14].reserved).to.eql(false);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:8080/api/seats",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Hold 5 seats from level 1 and level2 for chuan@test.com",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Should hold 5 seats\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.heldBy).to.eql('chuan@test.com');",
+							"    pm.expect(jsonData.seats.length).to.eql(5);",
+							"    pm.expect(jsonData.seats[0]).to.eql(16);",
+							"    pm.expect(jsonData.seats[4]).to.eql(20);",
+							"    ",
+							"    // get seatHoldId",
+							"    pm.environment.set(\"seatHoldId\", jsonData.id);",
+							"    ",
+							"    // wait for 11 seconds",
+							"    setTimeout(function(){}, 11000);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/api/holdseats?numSeats=5&minLevel=1&maxLevel=2&customerEmail=chuan@test.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"holdseats"
+					],
+					"query": [
+						{
+							"key": "numSeats",
+							"value": "5",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "minLevel",
+							"value": "1",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "maxLevel",
+							"value": "2",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "customerEmail",
+							"value": "chuan@test.com",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "reserve expired holding",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Should say holding expired\", function () {",
+							"    pm.response.to.have.body(\"Seat holding expired\");",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "http://localhost:8080/api/reservations?seatHoldId={{seatHoldId}}&customerEmail=chuan@test.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"reservations"
+					],
+					"query": [
+						{
+							"key": "seatHoldId",
+							"value": "{{seatHoldId}}",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "customerEmail",
+							"value": "chuan@test.com",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
