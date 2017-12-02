@@ -1,4 +1,4 @@
-# Seat Reservation Services test1
+# Seat Reservation Services
 
 This is a simple seat reservation services. It is implemented as a spring boot project. 
 
